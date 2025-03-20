@@ -3,7 +3,6 @@ import json
 import requests
 
 # ✅ Configure paths
-JSON_DIR = r"ADD_PATH_HERE"
 INSERT_URL = "http://127.0.0.1:8000/api/insert_articles/"
 HEADERS = {"Content-Type": "application/json"}
 

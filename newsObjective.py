@@ -13,13 +13,10 @@ from datetime import datetime
 # ✅ Set UTF-8 encoding for standard output
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 # ✅ Configure paths
-JSON_DIR = r"ADD_PATH_HERE"
 INSERT_URL = "http://127.0.0.1:8000/api/insert_articles/"
 HEADERS = {"Content-Type": "application/json"}
 
 # ✅ Base directories
-BASE_DIR = r"ADD_PATH_HERE"
-OUTPUT_DIR = r"ADD_PATH_HERE"
 CONFIG_FILE = "./config.json"
 DJANGO_API_URL = "http://127.0.0.1:8000/api/insert_articles/"
 
@@ -59,20 +56,50 @@ def read_json_files(directory):
                 articles.append(json_data)
     return articles
 
-# ✅ AI Article Processing (Can be commented out if already generated)
+# ✅ AI Article Processing with Categorization
 def process_articles_with_ai(articles):
     article_strings = [json.dumps(article, ensure_ascii=False, indent=4) for article in articles]
     articles_combined = "\n".join(article_strings)
 
-    # ✅ AI prompts
+    # ✅ AI Prompts for Summarization & Categorization
     title_prompt = "Bu haber makalelerine dayanarak, 3-4 kelimelik nesnel bir başlık oluşturun:"
     short_summary_prompt = "Bu haber makalelerine dayanarak, 10-50 karakter arasında kısa, betimleme içermeyen, salt bilgi içeren bir özet oluşturun:"
     detailed_summary_prompt = "Bu haber makalelerine dayanarak, detaylı ve salt bilgi içeren bir özet oluşturun:"
+    category_prompt = """
+    Bu haber makalesini aşağıdaki kategorilerden birine atayın:
+    Siyaset
+    Eğlence
+    Spor
+    Teknoloji
+    Sağlık
+    Çevre
+    Bilim
+    Eğitim
+    Ekonomi
+    Seyahat
+    Moda
+    Kültür
+    Suç
+    Yemek
+    Yaşam Tarzı
+    İş Dünyası
+    Dünya Haberleri
+    Oyun
+    Otomotiv
+    Sanat
+    Tarih
+    Uzay
+    İlişkiler
+    Din
+    Ruh Sağlığı
+    Magazin
+
+    Eğer uygun bir kategori bulamazsan, 'Genel' olarak belirle. Bu kategorilerden başka hiçbir şey yazma.
+    """
 
     # ✅ Initialize AI model
     model = genai.GenerativeModel('gemini-1.5-flash')
 
-    # ✅ Add delays to prevent hitting quota limits
     time.sleep(5)  
     try:
         title_response = model.generate_content(f"{title_prompt}\n{articles_combined}")
@@ -97,13 +124,21 @@ def process_articles_with_ai(articles):
         print(f"❌ Error generating detailed summary: {e}")
         detailed_summary = "Detailed summary failed"
 
+    time.sleep(5)
+    try:
+        category_response = model.generate_content(f"{category_prompt}\n{articles_combined}")
+        category = category_response.text.strip()
+    except Exception as e:
+        print(f"❌ Error generating category: {e}")
+        category = "Genel"  # Default to "General"
+
     # ✅ Generate Unique ID for the article
     article_id = str(uuid.uuid4())
 
     # ✅ Extract sources as a list
     sources = list(set([article.get("source", "Unknown") for article in articles if "source" in article]))
 
-    # ✅ Create structured output
+    # ✅ Create structured output with Category
     output = {
         "id": None,
         "articleId": article_id,
@@ -111,7 +146,7 @@ def process_articles_with_ai(articles):
         "content": "",
         "summary": short_summary,
         "longerSummary": detailed_summary,
-        "category": None,
+        "category": category,  # ✅ Assign AI-generated category
         "tags": [],
         "source": sources,
         "location": None,
@@ -121,6 +156,7 @@ def process_articles_with_ai(articles):
         "priority": None
     }
     return output
+
 
 # ✅ Save JSON output
 def save_json_output(data):
