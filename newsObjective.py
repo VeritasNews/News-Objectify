@@ -17,6 +17,9 @@ INSERT_URL = "http://127.0.0.1:8000/api/insert_articles/"
 HEADERS = {"Content-Type": "application/json"}
 
 # ✅ Base directories
+JSON_DIR = r"C:\Users\zeyne\Desktop\bitirme\VeritasNews\News-Objectify\objectified_jsons"
+BASE_DIR = r"C:\Users\zeyne\Desktop\bitirme\VeritasNews\News-Objectify\articles"
+OUTPUT_DIR = r"C:\Users\zeyne\Desktop\bitirme\VeritasNews\News-Objectify\objectified_jsons"
 CONFIG_FILE = "./config.json"
 DJANGO_API_URL = "http://127.0.0.1:8000/api/insert_articles/"
 
@@ -37,14 +40,13 @@ if API_KEY is None:
 # ✅ Configure AI API
 genai.configure(api_key=API_KEY)
 
-# ✅ Find `MatchedNewsData-*` directories
 def find_matched_news_dirs(base_dir):
     return [
         os.path.join(base_dir, d)
         for d in os.listdir(base_dir)
-        if os.path.isdir(os.path.join(base_dir, d)) and d.startswith("MatchedNewsData")
+        if os.path.isdir(os.path.join(base_dir, d))
     ]
-
+    
 # ✅ Read JSON files
 def read_json_files(directory):
     articles = []

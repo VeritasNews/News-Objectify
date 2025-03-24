@@ -3,6 +3,7 @@ import json
 import requests
 
 # ✅ Configure paths
+JSON_DIR = r"C:\Users\zeyne\Desktop\bitirme\VeritasNews\News-Objectify\objectified_jsons"
 INSERT_URL = "http://127.0.0.1:8000/api/insert_articles/"
 HEADERS = {"Content-Type": "application/json"}
 
