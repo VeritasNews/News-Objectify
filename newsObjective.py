@@ -65,7 +65,7 @@ def process_articles_with_ai(articles):
 
     # ✅ AI Prompts for Summarization & Categorization
     title_prompt = "Bu haber makalelerine dayanarak, 3-4 kelimelik nesnel bir başlık oluşturun:"
-    short_summary_prompt = "Bu haber makalelerine dayanarak, 10-50 karakter arasında kısa, betimleme içermeyen, salt bilgi içeren bir özet oluşturun:"
+    short_summary_prompt = "Bu haber makalelerine dayanarak, 10-30 karakter arasında kısa, betimleme içermeyen, salt bilgi içeren bir özet oluşturun:"
     detailed_summary_prompt = "Bu haber makalelerine dayanarak, detaylı ve salt bilgi içeren bir özet oluşturun:"
     category_prompt = """
     Bu haber makalesini aşağıdaki kategorilerden birine atayın:
